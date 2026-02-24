@@ -33,6 +33,8 @@ class MyPlugin(Star):
         begin_prompt = "现在要给你一个人设的信息，你需要根据这个人设和提示词来生成消息。注意不要回复其他内容\n"
         final_prompt = begin_prompt + persona_prompt + "\n用户的提示词是：" + prompt
 
+        event.plain_result(final_prompt)
+
         llm_resp = await self.context.llm_generate(chat_provider_id=provider_id, prompt=final_prompt)
         await event.send(event.plain_result("llm产生的消息" + llm_resp.completion_text))
         
