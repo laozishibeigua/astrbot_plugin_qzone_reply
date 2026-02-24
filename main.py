@@ -1,6 +1,7 @@
 from astrbot.api.event import filter, AstrMessageEvent, MessageEventResult
 from astrbot.api.star import Context, Star, register
 from astrbot.api import logger
+from astrbot.api.event.filter import event_message_type, EventMessageType
 
 class MyPlugin(Star):
     def __init__(self, context: Context):
@@ -19,5 +20,14 @@ class MyPlugin(Star):
         logger.info(message_chain)
         await event.send(event.plain_result(f"Hello, {user_name}, 你发了 {message_str}!")) # 发送一条纯文本消息
 
+    @filter.command("sendto")
+    async def send_to(self, event: AstrMessageEvent, target_user_id: str, prompt: str):
+        """用来给指定人发送LLM消息"""
+        user_name = event.get_sender_name()
+        umo = event.unified_msg_origin
+        provider_id = await self.context.get_current_chat_provider_id(umo=umo)
+        llm_resp = await self.context.llm_generate(chat_provider_id=provider_id, prompt=prompt)
+        await event.send(event.plain_result("llm产生的消息" + llm_resp.completion_text))
+        
     async def terminate(self):
         """可选择实现异步的插件销毁方法，当插件被卸载/停用时会调用。"""
