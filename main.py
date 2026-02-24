@@ -29,14 +29,21 @@ class MyPlugin(Star):
         
         persona_mgr = self.context.persona_manager
 
-        persona_prompt = str(persona_mgr.get_persona("小北瓜"))
-        begin_prompt = "现在要给你一个人设的信息，你需要根据这个人设和提示词来生成消息。注意不要回复其他内容\n"
-        final_prompt = begin_prompt + persona_prompt + "\n用户的提示词是：" + prompt
+        persona_prompt = await persona_mgr.get_persona("小北瓜")
+        persona_prompt = persona_prompt.system_prompt
+        
+        begin_prompt = "现在要给你一个人设的信息，你需要根据这个人设和提示词来生成消息注意！用户大概率会让你给另一个人发消息！下面是人设信息：\n"
+        
+        info_prompt = "用户QQid是:" + user_name + ", 用户请求你给另一个QQid为" + target_user_id + "的人发消息"
+        
+        emph_prompt = "你需要注意：1.你只需要根据人设和提示词来生成消息内容，注意不要回复其他内容！ 2.你可能需要根据提供的QQid找到相应的用户信息来生成消息内容！ 3.你需要根据人设来调整消息的风格和内容！\n"
+        
+        end_prompt = "\n用户的提示词是：" + prompt 
 
-        event.plain_result(final_prompt)
+        final_prompt = begin_prompt + persona_prompt + info_prompt + emph_prompt + end_prompt
 
         llm_resp = await self.context.llm_generate(chat_provider_id=provider_id, prompt=final_prompt)
-        await event.send(event.plain_result("llm产生的消息" + llm_resp.completion_text))
+        await event.send(event.plain_result(llm_resp.completion_text))
         
     async def terminate(self):
         """可选择实现异步的插件销毁方法，当插件被卸载/停用时会调用。"""
