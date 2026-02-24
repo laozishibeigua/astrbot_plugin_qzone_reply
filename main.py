@@ -26,7 +26,14 @@ class MyPlugin(Star):
         user_name = event.get_sender_name()
         umo = event.unified_msg_origin
         provider_id = await self.context.get_current_chat_provider_id(umo=umo)
-        llm_resp = await self.context.llm_generate(chat_provider_id=provider_id, prompt=prompt)
+        
+        persona_mgr = self.context.persona_manager
+
+        persona_prompt = str(persona_mgr.get_persona("小北瓜"))
+        begin_prompt = "现在要给你一个人设的信息，你需要根据这个人设和提示词来生成消息。注意不要回复其他内容\n"
+        final_prompt = begin_prompt + persona_prompt + "\n用户的提示词是：" + prompt
+
+        llm_resp = await self.context.llm_generate(chat_provider_id=provider_id, prompt=final_prompt)
         await event.send(event.plain_result("llm产生的消息" + llm_resp.completion_text))
         
     async def terminate(self):
