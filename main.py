@@ -94,5 +94,11 @@ class MyPlugin(Star):
 
         await event.send(event.plain_result(f"发送成功，target_session={target_session}"))
 
+    @filter.event_message_type(filter.EventMessageType.GROUP_MESSAGE)
+    async def auto_reply(self, event: AstrMessageEvent):
+        message_text = event.get_message_str() or ""
+        if "男朋友" in message_text:
+            await event.send(event.plain_result("是男生就不要找男朋友"))
+
     async def terminate(self):
         """可选实现异步插件销毁。"""
