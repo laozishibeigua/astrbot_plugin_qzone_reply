@@ -66,13 +66,14 @@ class MyPlugin(Star):
         )
 
         # 调试输出（你当前在用）
-        await event.send(event.plain_result(final_prompt))
+        # await event.send(event.plain_result(final_prompt))
 
         llm_resp = await self.context.llm_generate(
             chat_provider_id=provider_id,
             prompt=final_prompt,
         )
-        await event.send(event.plain_result("发送的消息为：" + llm_resp.completion_text))
+        
+        # await event.send(event.plain_result("发送的消息为：" + llm_resp.completion_text))
 
         message_chain = MessageChain().message(llm_resp.completion_text)
         target_session = self._build_target_session(umo, target_user_id)
@@ -92,7 +93,7 @@ class MyPlugin(Star):
             )
             return
 
-        await event.send(event.plain_result(f"发送成功，target_session={target_session}"))
+        # await event.send(event.plain_result(f"发送成功，target_session={target_session}"))
 
     @filter.event_message_type(filter.EventMessageType.GROUP_MESSAGE)
     async def auto_reply(self, event: AstrMessageEvent):
