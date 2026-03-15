@@ -2,7 +2,6 @@
 from astrbot.api.star import Context, Star
 from astrbot.api import logger
 
-
 class MyPlugin(Star):
     def __init__(self, context: Context):
         super().__init__(context)
@@ -36,7 +35,7 @@ class MyPlugin(Star):
         provider_id = await self.context.get_current_chat_provider_id(umo=umo)
 
         persona_mgr = self.context.persona_manager
-        persona = await persona_mgr.get_persona("小北瓜")
+        persona = await persona_mgr.get_persona("小北瓜3号")
         persona_prompt = persona.system_prompt if persona else ""
 
         begin_prompt = "现在要给你一个人设的信息，你需要根据这个人设和提示词来生成消息。下面是人设信息：\n"
@@ -72,7 +71,7 @@ class MyPlugin(Star):
             chat_provider_id=provider_id,
             prompt=final_prompt,
         )
-        
+
         # await event.send(event.plain_result("发送的消息为：" + llm_resp.completion_text))
 
         message_chain = MessageChain().message(llm_resp.completion_text)
@@ -100,6 +99,10 @@ class MyPlugin(Star):
         message_text = event.get_message_str() or ""
         if "男朋友" in message_text or ("小男生" in message_text and "可爱" in message_text):
             await event.send(event.plain_result("是男生就不要找男朋友，yx除外"))
+    
+    @filter.command("autothumb")
+    async def auto_thumb(self, event: AstrMessageEvent):
+        pass
 
     async def terminate(self):
         """可选实现异步插件销毁。"""
